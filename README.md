@@ -32,4 +32,5 @@ TDM-GCC下载地址：<br>
 要给exe加图标的步骤和上文64位方案相同。<br>
 请务必保证生成的exe文件和jar文件的相对路径与编译前自己修改的cpp文件中的filePath变量的值一致！<br>
 若编译出来的exe文件太大，可参考方案：[地址](https://blog.csdn.net/yanhanhui1/article/details/109631544)<br>
->最后更新：2020.11.13
+g++给exe加图标方案参考：[地址](https://mzlogin.blog.csdn.net/article/details/6647460)<br>
+>最后更新：2020.11.22
