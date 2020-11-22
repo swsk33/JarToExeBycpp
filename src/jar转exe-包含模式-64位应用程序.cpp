@@ -7,6 +7,8 @@ using namespace std;
 //文件名统一为mainJar.jar，再使用objcopy命令链接联合编译
 extern char _binary_mainJar_jar_start[];
 extern char _binary_mainJar_jar_end[];
+//可修改，java的运行路径，默认安装了java的电脑直接使用java命令即可，便携式jre需要在此指定
+string javaPath = "java";
 
 void hideWindow() {	//运行时隐藏控制台的函数
 	HWND hwnd = FindWindow("ConsoleWindowClass", NULL);
@@ -43,7 +45,9 @@ string getLocalTime() {	//获取当前时间以字符串形式返回
 int checkJre(string title, string msg) {	//检查jre是否存在
 	int isexists = 1;
 	char result[4];
-	FILE *fp = popen("java -version && echo yes || echo no", "r");
+	string checkArg = " -version && echo yes || echo no";
+	string checkCmd = javaPath + checkArg;
+	FILE *fp = popen(toChar(checkCmd), "r");
 	fgets(result, sizeof(result), fp);
 	pclose(fp);
 	system("cls");
@@ -76,7 +80,6 @@ int main(int argc, char *argv[]) {
 		string args = getArgs(argc, argv);
 		string fileName = getLocalTime() + ".jar";
 		string filePath = "%TEMP%\\" + fileName;
-		string javaPath = "java";	//可修改，java的运行路径，默认安装了java的电脑直接使用java命令即可，便携式jre需要在此指定
 		ofstream fp;
 		fp.open(fileName, ios::binary | ios::out);
 		fp.write(_binary_mainJar_jar_start, size);
