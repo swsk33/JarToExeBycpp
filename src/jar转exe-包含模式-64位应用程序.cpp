@@ -10,24 +10,28 @@ extern char _binary_mainJar_jar_end[];
 //可修改，java的运行路径，默认安装了java的电脑直接使用java命令即可，便携式jre需要在此指定
 string javaPath = "java";
 
-void hideWindow() {	//运行时隐藏控制台的函数
+//运行时隐藏控制台的函数
+void hideWindow() {
 	HWND hwnd = FindWindow("ConsoleWindowClass", NULL);
 	if (hwnd) {
 		ShowWindow(hwnd, SW_HIDE);
 	}
 }
 
-char *toChar(string s) {	//string转char*
+//string转char*
+char *toChar(string s) {
 	char *cs = (char *)malloc(s.length() + 1);
 	strcpy(cs, s.c_str());
 	return cs;
 }
 
-string surByQut(string s) {	//引号包围字符串
+//引号包围字符串
+string surByQut(string s) {
 	return "\"" + s + "\"";
 }
 
-string getLocalTime() {	//获取当前时间以字符串形式返回
+//获取当前时间以字符串形式返回
+string getLocalTime() {
 	time_t now;
 	struct tm *tm_now;
 	time(&now);
@@ -42,7 +46,8 @@ string getLocalTime() {	//获取当前时间以字符串形式返回
 	return time;
 }
 
-int checkJre(string title, string msg) {	//检查jre是否存在
+//检查jre是否存在
+int checkJre(string title, string msg) {
 	int isexists = 1;
 	char result[4];
 	string checkArg = " -version && echo yes || echo no";
@@ -59,7 +64,8 @@ int checkJre(string title, string msg) {	//检查jre是否存在
 	return isexists;
 }
 
-string getArgs(int argc, char *argv[]) {	//组合程序运行参数
+//组合程序运行参数
+string getArgs(int argc, char *argv[]) {
 	string args;
 	if (argc == 1) {
 		args = "";
@@ -75,7 +81,7 @@ string getArgs(int argc, char *argv[]) {	//组合程序运行参数
 
 int main(int argc, char *argv[]) {
 	hideWindow();	//此处可去除，去除后为控制台应用程序，否则为后台服务或者窗口程序
-	if (checkJre("错误", "未能找到可用的java运行环境（jre）！请先安装java8运行环境！")) {	//可改变，改变其中的形参设置没有检测到jre时的提示内容
+	if (checkJre("错误", "未能找到可用的java运行环境（jre）！请先安装java8运行环境！")) {	//可改变，改变其中的参数设置没有检测到jre时的提示内容
 		int size = _binary_mainJar_jar_end - _binary_mainJar_jar_start;
 		string args = getArgs(argc, argv);
 		string fileName = getLocalTime() + ".jar";
@@ -84,7 +90,8 @@ int main(int argc, char *argv[]) {
 		fp.open(fileName, ios::binary | ios::out);
 		fp.write(_binary_mainJar_jar_start, size);
 		fp.close();
-		string cmd = "move /y " + surByQut(fileName) + " " + surByQut(filePath) + " && cls && " + javaPath + " -jar " + surByQut(filePath) + args;
+		string preArgs = ""; //可修改，附带运行参数。即双击exe后自动加上的命令行参数。这个参数会先于命令行运行exe时加上的参数。
+		string cmd = "move /y " + surByQut(fileName) + " " + surByQut(filePath) + " && cls && " + javaPath + " -jar " + surByQut(filePath) + " " + preArgs + args;
 		system(toChar(cmd));
 	}
 }
