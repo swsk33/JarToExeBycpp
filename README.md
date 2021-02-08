@@ -24,8 +24,8 @@ TDM-GCC下载地址：<br>
 上述过程中链接图标资源文件不是必须，如果没有链接图标文件，使用g++命令时也不需要编译链接的图标文件，只需要源文件和链接后的jar文件即可。<br>
 **32位应用程序方案**<br>
 *32位应用程序方案是通过编译出一个exe来间接启动jar文件。32位无法实现把jar嵌入到exe文件里面去，所以只能外部引用启动，所以生成了exe后不能删除jar文件。*<br>
-先准备好你的jar文件，然后把项目src文件夹里面的"jar转exe-引用模式-32位应用程序.cpp"复制出来，并修改**65**行的filePath变量，修改为你的jar文件的相对路径（相对于cpp生成最终的exe文件的路径）<br>
-例如我cpp编译后的exe文件将生成（输出）到C:\Test目录下，我的main.jar文件也将放到这个目录下，那么相对路径就是"main.jar"。这时修改**65**行内容最终如下：<br>
+先准备好你的jar文件，然后把项目src文件夹里面的"jar转exe-引用模式-32位应用程序.cpp"复制出来，并修改**79**行的filePath变量，修改为你的jar文件的相对路径（相对于cpp生成最终的exe文件的路径）<br>
+例如我cpp编译后的exe文件将生成（输出）到C:\Test目录下，我的main.jar文件也将放到这个目录下，那么相对路径就是"main.jar"。这时修改**79**行内容最终如下：<br>
 ```string filePath = "main.jar";```<br>
 然后进行编译：<br>
 ```g++ -m32 cpp源文件 -o 输出编译文件.exe```<br>
@@ -33,4 +33,4 @@ TDM-GCC下载地址：<br>
 请务必保证生成的exe文件和jar文件的相对路径与编译前自己修改的cpp文件中的filePath变量的值一致！<br>
 若编译出来的exe文件太大，可参考方案：[地址](https://blog.csdn.net/yanhanhui1/article/details/109631544)<br>
 g++给exe加图标方案参考：[地址](https://blog.csdn.net/yanhanhui1/article/details/110238429)<br>
->最后更新：2021.2.7
+>最后更新：2021.2.8
