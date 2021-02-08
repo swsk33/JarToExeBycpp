@@ -92,7 +92,7 @@ int main(int argc, char *argv[]) {
 		string logFileLocation = getLocalTime() + "_error.log"; //可修改，标准错误输出文件位置，可以用%TEMP%代表临时目录，若上面变量writeErrorToLog为0，则此变量无效。
 		string cmd = "move /y " + surByQut(fileName) + " " + surByQut(filePath) + " && cls && " + javaPath + " -jar " + surByQut(filePath) + " " + preArgs + args;
 		if (writeErrorToLog) {
-			system(toChar(cmd + " 2>>" + logFileLocation));
+			system(toChar(cmd + " 2>>" + surByQut(logFileLocation)));
 		} else {
 			system(toChar(cmd));
 		}
