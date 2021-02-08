@@ -7,7 +7,7 @@ string javaPath = "java";
 
 //运行时隐藏控制台的函数
 void hideWindow() {
-	HWND hwnd = FindWindow("ConsoleWindowClass", NULL);
+	HWND hwnd = GetForegroundWindow();
 	if (hwnd) {
 		ShowWindow(hwnd, SW_HIDE);
 	}
@@ -23,6 +23,20 @@ char *toChar(string s) {
 //引号包围字符串
 string surByQut(string s) {
 	return "\"" + s + "\"";
+}
+
+//获取当前时间以字符串形式返回
+string getLocalTime() {
+	SYSTEMTIME sysTime;
+	GetLocalTime(&sysTime);
+	WORD year = sysTime.wYear;
+	WORD month = sysTime.wMonth;
+	WORD day = sysTime.wDay;
+	WORD hour = sysTime.wHour;
+	WORD minute = sysTime.wMinute;
+	WORD second = sysTime.wSecond;
+	WORD millionSecond = sysTime.wMilliseconds;
+	return to_string(year) + to_string(month) + to_string(day) + to_string(hour) + to_string(minute) + to_string(second) + to_string(millionSecond);
 }
 
 //检查jre是否存在
@@ -64,7 +78,13 @@ int main(int argc, char *argv[]) {
 		string args = getArgs(argc, argv);
 		string filePath = "";	//需填入，jar文件相对路径
 		string preArgs = ""; //可修改，附加参数。即双击exe时自动加上的参数，先于命令行传给exe的参数。
+		int writeErrorToLog = 0; //可修改，是否把程序的标准错误输出重定向到本地文件。0代表否，1代表是。建议控制台应用程序不要开启此项。
+		string logFileLocation = getLocalTime() + "_error.log"; //可修改，标准错误输出文件位置，可以用%TEMP%代表临时目录，若上面变量writeErrorToLog为0，则此变量无效。
 		string cmd = javaPath + " -jar " + surByQut(filePath) + " " + preArgs + args;
-		system(toChar(cmd));
+		if (writeErrorToLog) {
+			system(toChar(cmd + " 2>>" + logFileLocation));
+		} else {
+			system(toChar(cmd));
+		}
 	}
 }

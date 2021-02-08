@@ -1,7 +1,6 @@
 #include <iostream>
 #include <fstream>
 #include <windows.h>
-#include <time.h>
 using namespace std;
 
 //文件名统一为mainJar.jar，再使用objcopy命令链接联合编译
@@ -12,7 +11,7 @@ string javaPath = "java";
 
 //运行时隐藏控制台的函数
 void hideWindow() {
-	HWND hwnd = FindWindow("ConsoleWindowClass", NULL);
+	HWND hwnd = GetForegroundWindow();
 	if (hwnd) {
 		ShowWindow(hwnd, SW_HIDE);
 	}
@@ -32,18 +31,16 @@ string surByQut(string s) {
 
 //获取当前时间以字符串形式返回
 string getLocalTime() {
-	time_t now;
-	struct tm *tm_now;
-	time(&now);
-	tm_now = localtime(&now);
-	int year = tm_now->tm_year;
-	int mon = tm_now->tm_mon;
-	int day = tm_now->tm_mday;
-	int hour = tm_now->tm_hour;
-	int min = tm_now->tm_min;
-	int sec = tm_now->tm_min;
-	string time = to_string(year) + to_string(mon) + to_string(day) + to_string(hour) + to_string(min) + to_string(sec);
-	return time;
+	SYSTEMTIME sysTime;
+	GetLocalTime(&sysTime);
+	WORD year = sysTime.wYear;
+	WORD month = sysTime.wMonth;
+	WORD day = sysTime.wDay;
+	WORD hour = sysTime.wHour;
+	WORD minute = sysTime.wMinute;
+	WORD second = sysTime.wSecond;
+	WORD millionSecond = sysTime.wMilliseconds;
+	return to_string(year) + to_string(month) + to_string(day) + to_string(hour) + to_string(minute) + to_string(second) + to_string(millionSecond);
 }
 
 //检查jre是否存在
@@ -91,7 +88,13 @@ int main(int argc, char *argv[]) {
 		fp.write(_binary_mainJar_jar_start, size);
 		fp.close();
 		string preArgs = ""; //可修改，附带运行参数。即双击exe后自动加上的命令行参数。这个参数会先于命令行运行exe时加上的参数。
+		int writeErrorToLog = 0; //可修改，是否把程序的标准错误输出重定向到本地文件。0代表否，1代表是。建议控制台应用程序不要开启此项。
+		string logFileLocation = getLocalTime() + "_error.log"; //可修改，标准错误输出文件位置，可以用%TEMP%代表临时目录，若上面变量writeErrorToLog为0，则此变量无效。
 		string cmd = "move /y " + surByQut(fileName) + " " + surByQut(filePath) + " && cls && " + javaPath + " -jar " + surByQut(filePath) + " " + preArgs + args;
-		system(toChar(cmd));
+		if (writeErrorToLog) {
+			system(toChar(cmd + " 2>>" + logFileLocation));
+		} else {
+			system(toChar(cmd));
+		}
 	}
 }
