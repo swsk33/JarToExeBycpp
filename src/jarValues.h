@@ -8,8 +8,8 @@ using namespace std;
 /**
  * 下列几个全局变量可以改变
  **/
-//32位程序需要填入：jar文件相对路径，64位程序忽略此项
-string WIN32_JAR_PATH = "";
+//32位程序需要根据实际情况修改/填入：jar文件相对路径，64位程序忽略此项
+string WIN32_JAR_PATH = "mainJar.jar";
 //java的运行路径，默认安装了java的电脑直接使用java命令即可，便携式jre需要在此指定
 string JAVA_PATH = "java";
 //没有检测到jre时的提示内容
