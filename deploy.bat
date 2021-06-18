@@ -1,12 +1,13 @@
 @echo off
+setlocal enabledelayedexpansion
 cd %~dp0
-set mode=%1
-set suffix=%2
+set dmode=%1
+set version=%2
 set dest=C:\Users\%username%\Downloads
 set copyDir=%dest%\j2ec
 set fileName=j2ec
-if defined mode (
-	if %mode%==t (
+if defined dmode (
+	if %dmode%==t (
 		mkdir %copyDir%
 		mkdir %copyDir%\cppsrc
 		copy /y "cppsrc\*" "%copyDir%\cppsrc"
@@ -15,12 +16,12 @@ if defined mode (
 		echo 已复制所需文件至%copyDir%文件夹中！
 		goto end
 	) else (
-		if %mode%==r (
-			if defined suffix (
-				set fileName=%fileName%-%suffix%
+		if %dmode%==r (
+			if defined version (
+				set fileName=%fileName%-%version%
 			)
-			7z a -t7z -mx9 "%dest%\%fileName%.7z" "cppsrc" ".\builder\buildexe.exe" ".\builder\cfg.properties"
-			echo 部署发行版完成至%dest%\%fileName%.7z！
+			7z a -t7z -mx9 "%dest%\!fileName!.7z" "cppsrc" ".\builder\buildexe.exe" ".\builder\cfg.properties"
+			echo 部署发行版完成至%dest%\!fileName!.7z！
 			goto end
 		) else (
 			echo 错误！

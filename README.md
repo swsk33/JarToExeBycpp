@@ -7,53 +7,50 @@ TDM-GCC下载地址：<br>
 [备用下载](https://swsk33.lanzoui.com/b0bqvyq4d)<br>
 
 ### 使用说明
+#### 1，环境配置
 先需要安装TDM-GCC并配置好环境变量（一般安装完成就配置好了）。<br>
-然后下载或者git clone项目源码进行操作。<br>
-#### 64位应用程序方案-包含模式
-*64位应用程序方案是把jar包含到exe里面，然后编译出来的exe点击可直接运行jar，生成了exe后就可以删除原来的jar文件了。*<br>
-然后先把要打包的jar文件改名为mainJar.jar，然后在jar文件所在目录下使用objcopy命令链接：<br>
-```
-objcopy -I binary -O pe-x86-64 -B i386:x86-64 mainJar.jar 输出文件名.o
-```
-输出文件名自己随意。<br>
-这样就得到了链接后的jar文件，扩展名为o。<br>
-若要给编译出来的exe加上图标，还需新建一个rc文件，用文本编辑器打开并加入：<br>
-```
-1 ICON ico文件路径
-```
-然后使用windres命令编译图标资源文件：<br>
-```
-windres rc文件路径 输出图标文件.o
-```
-然后把cppsrc文件夹里面的"j2e-include.cpp"、"jarUtils.h"和"jarValues.h"这三个源文件复制出来放在链接后的jar文件和链接后的图标文件同目录下，使用g++命令一起编译即可：<br>
-```
-g++ -m64 -finput-charset=UTF-8 -fexec-charset=GBK j2e-include.cpp 链接后的jar文件 [链接的图标文件] -o 输出编译文件.exe
-```
-编译时必须保证cpp文件和两个头文件以及链接的jar等链接文件在一个文件夹下，然后就得到了打包好了的jar文件了！<br>
-上述过程中链接图标资源文件不是必须，如果没有链接图标文件，使用g++命令时也不需要编译链接的图标文件，只需要源文件和链接后的jar文件即可。<br>
-#### 32位应用程序方案-引用模式
-*32位应用程序方案是通过编译出一个exe来间接启动jar文件。32位无法实现把jar嵌入到exe文件里面去，所以只能外部引用启动，所以生成了exe后不能删除jar文件。*<br>
-先准备好你的jar文件，然后把项目cppsrc文件夹里面的"j2e-refer.cpp"、"jarUtils.h"和"jarValues.h"这三个源文件复制出来，并修改"jarValues.h"文件中**12**行的```WIN32_JAR_PATH```变量，修改为你的jar文件的相对路径（相对于cpp生成最终的exe文件的路径）<br>
-例如我cpp编译后的exe文件将生成（输出）到C:\Test目录下，我的main.jar文件也将放到这个目录下，那么相对路径就是"main.jar"。这时修改**12**行内容最终如下：<br>
-```
-string WIN32_JAR_PATH = "main.jar";
-```
-然后进行编译：<br>
-```
-g++ -m32 -finput-charset=UTF-8 -fexec-charset=GBK j2e-refer.cpp -o 输出编译文件.exe
-```
-要给exe加图标的步骤和上文64位方案相同。<br>
-编译时必须保证cpp文件和两个头文件在一个目录下，且需要保证生成的exe文件和jar文件的相对路径与编译前自己修改的"jarValues.h"文件中的WIN32_JAR_PATH变量的值一致！<br>
-#### 64位应用程序方案-引用模式
-按照上述方法生成的64位程序是包含了jar的，如果在64位平台上不想包含jar进exe只是让exe调用命令启动jar，只需要用64位模式编译"j2e-refer.cpp"即可：
-```
-g++ -m64 -finput-charset=UTF-8 -fexec-charset=GBK j2e-refer.cpp -o 输出编译文件.exe
-```
-注意这样的话也需要和上述“32位应用程序方案-引用模式”一样，对"jarValues.h"里面```WIN32_JAR_PATH```进行修改设定为你的jar文件相对路径。<br>
-可以说此“64位应用程序方案-引用模式”中除了编译命令有个参数不一样之外，其余步骤和“32位应用程序方案-引用模式”是一模一样的。<br>
+然后[下载](https://gitee.com/swsk33/jarToExeBycpp/releases)并解压右侧发行版/Release里面j2ec-xxx.7z文件（xxx代表版本号，下载最新版即可）进行操作。<br>
+#### 2，按需修改配置文件
+在解压的文件夹中有一个"cfg.properties"文件，可以使用文本编辑器打开，这是全局配置文件，没有特殊需要可以不修改，不过大多数时候可能需要修改，里面配置值代表如下：
+- javapath=java的运行路径，默认安装了java的电脑直接填java即可，便携式jre需要在此指定
+- errormsg=没有检测到jre时的提示内容
+- preArgs=附带运行参数。即双击exe后自动加上的命令行参数,这个参数会先于命令行运行exe时加上的参数
+- writeLogToFile=是否把程序的标准错误输出重定向到本地文件，建议控制台应用程序不要开启此项，开启填true否则为false
+- logFilePath=标准错误输出文件位置，若上面变量writeLogToFile为false，则此变量无效
+- winapp=是否是窗口应用程序，窗口程序填true，控制台程序填false
 
-**所有变量存放在"jarValues.h"中且是可以修改的，可以根据其中注释修改。**<br>
+配置文件中以#开头的一行是注释，构建exe时不会读取注释内容，默认情况下配置文件是全部被注释的状态。可根据自己需要去掉配置值的注释并填入配置值。
+#### 3，打开命令行/cmd调用buildexe进行jar到exe的构建
+使用命令行/cmd的cd命令进入到解压的文件夹，输入命令调用buildexe.exe文件，命令形式如下：
+```
+buildexe -re/-in -j jar文件路径 -o 输出exe路径 -p 架构 [-i ico图标文件路径] [-c 指定配置文件] [-s]
+```
+上述命令中中括号括起来部分是可选参数，实际加上这些可选参数执行时不需要写中括号。<br>
+-re和-in必须要指定一个，且不能共存，它们含义下：
+- -re --- 引用模式，这时会把源jar文件和构建的exe文件一同放到输出目录，exe相当于启动jar的作用，支持32位和64位程序
+- -in --- 包含模式，这时会把源jar文件嵌入至构建的exe文件，生成的exe文件可以单独存在，这种模式只支持64位程序
 
+-s --- 是否去除调试信息以减小生成exe大小，默认不去除
+
+架构(-p)参数可选值如下：                                    
+i386 --- 32位应用程序                                  
+x64 --- 64位程序
+
+当没有指定-c时，程序会默认使用buildexe所在目录下的cfg.properties作为配置文件<br>
+上述参数顺序可以任意写。<br>
+#### 5，实例
+**将E:\\中转\\a.jar打包为main.exe的64位应用程序放到用户下载文件夹：**<br>
+```
+buildexe -in -j "E:\中转\a.jar" -p x64 -o "C:\Users\%username%\Downloads\main.exe"
+```
+**构建32位应用程序引用模式的main.exe用于启动E:\\中转\\a.jar，放到用户下载文件夹，并指定exe图标为C:\\icon\\ex.ico：**<br>
+```
+buildexe -re -p i386 -j "E:\中转\a.jar" -o "C:\Users\%username%\Downloads\main.exe" -i "C:\icon\ex.ico"
+```
+#### 6，其它
 若编译出来的exe文件太大，可参考方案：[地址](https://blog.csdn.net/yanhanhui1/article/details/109631544)<br>
-g++给exe加图标方案参考：[地址](https://blog.csdn.net/yanhanhui1/article/details/110238429)<br>
->最后更新：2021.6.15
+**该程序原理可以参考：**<br>
+C语言或者C++中隐藏控制台窗口：[地址](https://blog.csdn.net/yanhanhui1/article/details/109271169)<br>
+在C语言/C++中把资源编译进exe可执行文件，并运行时释放资源：[地址](https://blog.csdn.net/yanhanhui1/article/details/109235349)<br>
+g++给exe加图标：[地址](https://blog.csdn.net/yanhanhui1/article/details/110238429)<br>
+>最后更新：2021.6.18
