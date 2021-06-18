@@ -121,7 +121,11 @@ namespace JarToExeBuilder
 					continue;
 				}
 				string key = cfg.Substring(0, cfg.IndexOf("=")).Trim();
-				string value = cfg.Substring(cfg.IndexOf("=") + 1).Trim();
+				string value = "";
+				if (!cfg.Trim().EndsWith("="))
+				{
+					value = cfg.Substring(cfg.IndexOf("=") + 1).Trim();
+				}
 				if (key.Equals("javapath"))
 				{
 					configInstance.javaPath = value;
