@@ -7,8 +7,6 @@ namespace JarToExeBuilder
 	{
 		public static string cfgPath = Program.APP_PATH + "cfg.properties";
 
-		private string jarPath = "mainJar.jar";
-
 		private string javaPath = "java";
 
 		private string errorMsg = "未能找到可用的java运行环境（jre）！请先安装java8运行环境！";
@@ -25,19 +23,6 @@ namespace JarToExeBuilder
 		/// 全局配置实例
 		/// </summary>
 		private static Config configInstance = new Config();
-
-		public string JarPath
-		{
-			get
-			{
-				return jarPath;
-			}
-
-			set
-			{
-				jarPath = value;
-			}
-		}
 
 		public string JavaPath
 		{
@@ -137,10 +122,6 @@ namespace JarToExeBuilder
 				}
 				string key = cfg.Substring(0, cfg.IndexOf("=")).Trim();
 				string value = cfg.Substring(cfg.IndexOf("=") + 1).Trim();
-				if (key.Equals("jarpath"))
-				{
-					configInstance.jarPath = value;
-				}
 				if (key.Equals("javapath"))
 				{
 					configInstance.javaPath = value;
