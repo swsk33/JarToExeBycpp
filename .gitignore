@@ -1,3 +1,7 @@
-src/*.exe
-src/*.o
+**/*.exe
+**/*.o
+**/*.pdb
+**/bin
+**/obj
 .vscode
+.vs

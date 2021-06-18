@@ -1,0 +1,2 @@
+这个是构建程序生成目录，需要使用命令行调用exe。
+生成的“buildexe.exe”文件需要和“cppsrc”文件夹、“cfg.properties”放在一个目录才能正常工作。
