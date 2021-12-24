@@ -1,7 +1,7 @@
-cppsrc/*.exe
-cppsrc/*.o
-**/*.pdb
-**/bin
-**/obj
+/cppsrc/*.exe
+/cppsrc/*.o
+/**/*.pdb
+/**/bin
+/**/obj
 .vscode
 .vs
